@@ -1,0 +1,59 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'org.springframework.boot:spring-boot-gradle-plugin:3.5.6'
+		classpath 'io.spring.gradle:dependency-management-plugin:1.1.7'
+	}
+}
+
+group = 'com.roadguard'
+version = '0.0.1-SNAPSHOT'
+description = 'Demo project for Spring Boot Monorepo'
+
+allprojects {
+	repositories {
+		mavenCentral()
+	}
+
+	group = 'com.roadguard'
+	version = '0.0.1-SNAPSHOT'
+}
+
+subprojects {
+	apply plugin: 'java'
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
+
+	java {
+		toolchain {
+			languageVersion = JavaLanguageVersion.of(21)
+		}
+	}
+
+	configurations {
+		compileOnly {
+			extendsFrom annotationProcessor
+		}
+	}
+
+	dependencies {
+		compileOnly 'org.projectlombok:lombok'
+		annotationProcessor 'org.projectlombok:lombok'
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+		testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	}
+
+	tasks.named('test') {
+		useJUnitPlatform()
+	}
+
+	tasks.named('bootJar') {
+		enabled = false
+	}
+
+	tasks.named('jar') {
+		enabled = true
+	}
+}

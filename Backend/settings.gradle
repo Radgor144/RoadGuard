@@ -1,0 +1,11 @@
+rootProject.name = 'RoadGuard'
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+    }
+}
+
+include 'monitoring-service'
+include 'auth-service'
+
