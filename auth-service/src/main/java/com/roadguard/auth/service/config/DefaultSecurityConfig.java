@@ -1,6 +1,5 @@
 package com.roadguard.auth.service.config;
 
-import com.roadguard.auth.service.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +19,6 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class DefaultSecurityConfig {
-    private final CustomUserDetailsService userDetailsService;
     private final JwtDecoder jwtDecoder;
 
     @Bean
@@ -40,17 +38,16 @@ public class DefaultSecurityConfig {
     @Order(2)
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(authorizeRequests ->
-                authorizeRequests
-                    .requestMatchers("/api/users/register").permitAll()
-                    .anyRequest().authenticated()
-            )
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .oauth2ResourceServer(oauth2 -> oauth2
-                .jwt(jwt -> jwt.decoder(jwtDecoder)))
-            .userDetailsService(userDetailsService);
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                        .requestMatchers("/api/users/register").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").authenticated()
+                        .anyRequest().authenticated()
+                )
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.decoder(jwtDecoder)));
         return http.build();
     }
 

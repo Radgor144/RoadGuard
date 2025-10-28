@@ -7,7 +7,8 @@ import com.roadguard.auth.service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -16,9 +17,9 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
-    @Transactional
     public AuthResponse registerUser(UserRegistrationRequest request) {
         User user = new User();
+        user.setId(UUID.randomUUID());
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(request.getRole());
