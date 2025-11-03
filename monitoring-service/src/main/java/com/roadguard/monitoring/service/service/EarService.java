@@ -1,0 +1,51 @@
+package com.roadguard.monitoring.service.service;
+
+import com.roadguard.monitoring.service.entity.EarData;
+import com.roadguard.monitoring.service.repository.EarDataRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+@Slf4j
+@RequiredArgsConstructor
+@Service
+public class EarService {
+    private final EarDataRepository repository;
+    private final Map<String, Queue<Double>> earBuffers = new ConcurrentHashMap<>();
+    private static final long ONE_MINUTE_MS = 60_000;
+
+    public void addEarValue(String driverId, double ear) {
+        earBuffers.computeIfAbsent(driverId, k -> new ConcurrentLinkedQueue<>()).add(ear);
+    }
+
+    @Scheduled(fixedRate = ONE_MINUTE_MS)
+    public void calculateAndSaveAverage() {
+        earBuffers.forEach(this::saveAverage);
+    }
+
+    private void saveAverage(String driverId, Queue<Double> buffer) {
+        double average = buffer.stream()
+                .mapToDouble(Double::doubleValue)
+                .average()
+                .orElse(Double.NaN);
+
+        if (Double.isNaN(average)) return;
+
+        buffer.clear();
+
+        EarData data = new EarData();
+        data.setDriverId(driverId);
+        data.setAverageEar(average);
+        data.setTimestamp(LocalDateTime.now());
+        repository.save(data);
+
+        log.info("Driver {}: Średnie EAR = {:.3f} z {} próbek", driverId, average);
+    }
+}
