@@ -1,17 +1,27 @@
-//package com.roadguard.monitoring.service.controller;
-//
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.security.core.Authentication;
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RestController;
-//
-//@RestController
-//@RequestMapping("/api/dashboard")
-//public class DashboardController {
-//
-//    @GetMapping
-//    public ResponseEntity<String> getDashboard(Authentication authentication) {
-//        return ResponseEntity.ok("Dashboard dostępny dla użytkownika: " + authentication.getName());
-//    }
-//}
+package com.roadguard.monitoring.service.controller;
+
+import com.roadguard.monitoring.service.dto.EarDataResponse;
+import com.roadguard.monitoring.service.dto.EarRangeRequest;
+import com.roadguard.monitoring.service.service.DashboardService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/dashboard")
+@RequiredArgsConstructor
+public class DashboardController {
+
+    private final DashboardService dashboardService;
+
+    @PostMapping("/ear-data")
+    public List<EarDataResponse> getEarData(@RequestBody EarRangeRequest request) {
+        return dashboardService.getEarData(request.getDriverId(),
+                                           request.getStartTime(),
+                                           request.getEndTime());
+    }
+}
