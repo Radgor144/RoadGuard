@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +17,8 @@ public class DashboardService {
     private final EarDataRepository earDataRepository;
     private static final int MAX_POINTS = 60;
 
-    public List<EarDataResponse> getEarData(String driverId, LocalDateTime startTime, LocalDateTime endTime) {
+//    ToDo: Optimize method
+    public List<EarDataResponse> getEarData(UUID driverId, LocalDateTime startTime, LocalDateTime endTime) {
         List<EarData> allData = earDataRepository.findByDriverIdAndTimestampBetweenOrderByTimestampAsc(driverId, startTime, endTime);
 
         int totalPoints = allData.size();

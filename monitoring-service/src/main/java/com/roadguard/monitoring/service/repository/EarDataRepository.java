@@ -5,7 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
-public interface EarDataRepository extends JpaRepository<EarData, Long> {
-    List<EarData> findByDriverIdAndTimestampBetweenOrderByTimestampAsc(String driverId, LocalDateTime startTime, LocalDateTime endTime);
+public interface EarDataRepository extends JpaRepository<EarData, UUID> {
+    List<EarData> findByDriverIdAndTimestampBetweenOrderByTimestampAsc(UUID driverId, LocalDateTime startTime, LocalDateTime endTime);
 }
