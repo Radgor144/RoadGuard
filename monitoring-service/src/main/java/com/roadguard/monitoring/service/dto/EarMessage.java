@@ -7,12 +7,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @AllArgsConstructor
 public class EarMessage {
     @NotNull
-    private String driverId;
+    private UUID driverId;
 
     @DecimalMin("0.0")
     @DecimalMax("1.0")
