@@ -1,7 +1,8 @@
 package com.roadguard.auth.service.service;
 
 import com.roadguard.auth.service.dto.AuthResponse;
-import com.roadguard.auth.service.dto.UserRegistrationRequest;
+import com.roadguard.auth.service.dto.UserCredentialsRequest;
+import com.roadguard.auth.service.entity.Role;
 import com.roadguard.auth.service.entity.User;
 import com.roadguard.auth.service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,15 +18,27 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
-    public AuthResponse registerUser(UserRegistrationRequest request) {
+    public AuthResponse registerUser(UserCredentialsRequest request) {
         User user = new User();
         user.setId(UUID.randomUUID());
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(request.getRole());
+        user.setRole(Role.USER);
         user.setEnabled(true);
 
         userRepository.save(user);
+
+        String token = tokenService.generateToken(user);
+        return new AuthResponse(token, "Bearer");
+    }
+
+    public AuthResponse loginUser(UserCredentialsRequest request) {
+        User user = userRepository.findByUsername(request.getUsername())
+                                  .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
 
         String token = tokenService.generateToken(user);
         return new AuthResponse(token, "Bearer");
