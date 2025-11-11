@@ -40,6 +40,7 @@ public class DefaultSecurityConfig {
         http
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/api/users/register").permitAll()
+                        .requestMatchers("/api/users/login").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").authenticated()
                         .anyRequest().authenticated()
                 )
