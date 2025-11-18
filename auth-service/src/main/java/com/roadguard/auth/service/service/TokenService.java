@@ -25,7 +25,7 @@ public class TokenService {
                 .issuer("http://localhost:" + serverPort)
                 .issuedAt(now)
                 .expiresAt(now.plus(1, ChronoUnit.DAYS))
-                .subject(user.getUsername())
+                .subject(user.getEmail())
                 .claim("role", user.getRole())
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

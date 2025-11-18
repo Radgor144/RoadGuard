@@ -21,7 +21,7 @@ public class UserService {
     public AuthResponse registerUser(UserCredentialsRequest request) {
         User user = new User();
         user.setId(UUID.randomUUID());
-        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.USER);
         user.setEnabled(true);
@@ -33,7 +33,7 @@ public class UserService {
     }
 
     public AuthResponse loginUser(UserCredentialsRequest request) {
-        User user = userRepository.findByUsername(request.getUsername())
+        User user = userRepository.findByEmail(request.getEmail())
                                   .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
